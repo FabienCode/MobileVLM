@@ -24,7 +24,7 @@ case ${TASK} in
         OUTPUT_DIR=$5
         OUTPUT_DIR_PT=${OUTPUT_DIR}/mobilevlm_v2-1.pretrain
         mkdir -p ${OUTPUT_DIR_PT}
-        deepspeed --include localhost:1,2,3,6 mobilevlm/train/train_mem.py \
+        deepspeed --include localhost:1,5,7 mobilevlm/train/train_mem.py \
             --deepspeed scripts/deepspeed/zero2.json \
             --model_name_or_path ${LANGUAGE_MODEL} \
             --version plain \
@@ -55,7 +55,7 @@ case ${TASK} in
             --tf32 True \
             --model_max_length 2048 \
             --gradient_checkpointing True \
-            --dataloader_num_workers 4 \
+            --dataloader_num_workers 2 \
             --lazy_preprocess True \
             --report_to none \
             2>&1 | tee ${OUTPUT_DIR_PT}/log.txt &&
@@ -70,7 +70,7 @@ case ${TASK} in
         OUTPUT_DIR_PT=${OUTPUT_DIR}/mobilevlm_v2-1.pretrain
         OUTPUT_DIR_FT=${OUTPUT_DIR}/mobilevlm_v2-2.finetune
         mkdir -p ${OUTPUT_DIR_FT}
-        deepspeed --include localhost:1,2,3,6 mobilevlm/train/train_mem.py \
+        deepspeed --include localhost:1,5,7 mobilevlm/train/train_mem.py \
             --deepspeed scripts/deepspeed/zero3.json \
             --model_name_or_path ${OUTPUT_DIR_PT} \
             --version v1 \
@@ -102,7 +102,7 @@ case ${TASK} in
             --tf32 True \
             --model_max_length 2048 \
             --gradient_checkpointing True \
-            --dataloader_num_workers 4 \
+            --dataloader_num_workers 2 \
             --lazy_preprocess True \
             --report_to none \
             2>&1 | tee -a ${OUTPUT_DIR_FT}/log.txt &&
